@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,4 +5,94 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model Users {
+  id         Int         @id @default(autoincrement())
+  email      String      @unique @db.VarChar(255)
+  password   String      @db.VarChar(255)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  Journals   Journals[]
+  Objectives Objectives?
+  Sessions   Sessions[]
+  Sheets     Sheets[]
+  Workouts   Workouts[]
+}
+
+model Sessions {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Users     Users    @relation(fields: [userId], references: [id])
+}
+
+model Objectives {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @unique
+  title         String?
+  currentWeight Decimal? @db.Decimal
+  goalWeight    Decimal? @db.Decimal
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  Users         Users    @relation(fields: [userId], references: [id])
+}
+
+model Exercises {
+  id              Int               @id @default(autoincrement())
+  name            String            @unique @db.VarChar(255)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  SheetsExercises SheetsExercises[]
+}
+
+model Sheets {
+  id              Int               @id @default(autoincrement())
+  userId          Int
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  Users           Users             @relation(fields: [userId], references: [id])
+  SheetsExercises SheetsExercises[]
+  Workouts        Workouts[]
+}
+
+model SheetsExercises {
+  id         Int       @id @default(autoincrement())
+  exerciseId Int
+  sheetId    Int
+  weight     Decimal   @default(0) @db.Decimal
+  reps       Int
+  sets       Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  Exercises  Exercises @relation(fields: [exerciseId], references: [id])
+  Sheets     Sheets    @relation(fields: [sheetId], references: [id])
+}
+
+model Workouts {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  sheetId   Int?
+  cardio    Cardio?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Users     Users    @relation(fields: [userId], references: [id])
+  Sheets    Sheets?  @relation(fields: [sheetId], references: [id])
+}
+
+enum Cardio {
+  RUNNING
+  CYCLING
+  SWIMMING
+}
+
+model Journals {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Users     Users    @relation(fields: [userId], references: [id])
 }
