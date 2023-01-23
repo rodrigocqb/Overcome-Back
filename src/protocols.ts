@@ -1,4 +1,4 @@
 export type ApplicationError = {
   name: string;
-  message: string;
+  message: string | string[];
 };

@@ -1,8 +1,8 @@
 import { ApplicationError } from "@/protocols";
 
-export function badRequestError(): ApplicationError {
+export function badRequestError(message: string | string[] = "Bad request!"): ApplicationError {
   return {
     name: "BadRequestError",
-    message: "Bad request!",
+    message,
   };
 }
