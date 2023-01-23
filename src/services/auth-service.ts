@@ -9,15 +9,18 @@ async function createUser({ email, password }: UserParams): Promise<User> {
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  const user = await authRepository.createUser({ email, password: hashedPassword });
+  const user = await authRepository.createUser({
+    email,
+    password: hashedPassword,
+  });
 
   return user;
 }
 
 async function checkIfUserWithEmailAlreadyExists(email: string) {
-  const user = await authRepository.findUserByEmail(email);
+  const existingUser = await authRepository.findUserByEmail(email);
 
-  if(user) throw conflictError();
+  if (existingUser) throw conflictError();
 }
 
 const authService = { createUser };
