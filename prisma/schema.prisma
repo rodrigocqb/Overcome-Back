@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  engineType = "binary"
 }
 
 datasource db {
@@ -7,29 +8,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
+model User {
   id         Int         @id @default(autoincrement())
   email      String      @unique @db.VarChar(255)
   password   String      @db.VarChar(255)
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
-  Journals   Journals[]
-  Objectives Objectives?
-  Sessions   Sessions[]
-  Sheets     Sheets[]
-  Workouts   Workouts[]
+  Journal   Journal[]
+  Objective Objective?
+  Session   Session[]
+  Sheet     Sheet[]
+  Workout   Workout[]
 }
 
-model Sessions {
+model Session {
   id        Int      @id @default(autoincrement())
   userId    Int
   token     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Users     Users    @relation(fields: [userId], references: [id])
+  User     User    @relation(fields: [userId], references: [id])
 }
 
-model Objectives {
+model Objective {
   id            Int      @id @default(autoincrement())
   userId        Int      @unique
   title         String?
@@ -37,28 +38,28 @@ model Objectives {
   goalWeight    Decimal? @db.Decimal
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  Users         Users    @relation(fields: [userId], references: [id])
+  User         User    @relation(fields: [userId], references: [id])
 }
 
-model Exercises {
+model Exercise {
   id              Int               @id @default(autoincrement())
   name            String            @unique @db.VarChar(255)
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
-  SheetsExercises SheetsExercises[]
+  SheetExercise SheetExercise[]
 }
 
-model Sheets {
+model Sheet {
   id              Int               @id @default(autoincrement())
   userId          Int
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
-  Users           Users             @relation(fields: [userId], references: [id])
-  SheetsExercises SheetsExercises[]
-  Workouts        Workouts[]
+  User           User             @relation(fields: [userId], references: [id])
+  SheetExercise SheetExercise[]
+  Workout        Workout[]
 }
 
-model SheetsExercises {
+model SheetExercise {
   id         Int       @id @default(autoincrement())
   exerciseId Int
   sheetId    Int
@@ -67,19 +68,19 @@ model SheetsExercises {
   sets       Int
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
-  Exercises  Exercises @relation(fields: [exerciseId], references: [id])
-  Sheets     Sheets    @relation(fields: [sheetId], references: [id])
+  Exercise  Exercise @relation(fields: [exerciseId], references: [id])
+  Sheet     Sheet    @relation(fields: [sheetId], references: [id])
 }
 
-model Workouts {
+model Workout {
   id        Int      @id @default(autoincrement())
   userId    Int
   sheetId   Int?
   cardio    Cardio?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Users     Users    @relation(fields: [userId], references: [id])
-  Sheets    Sheets?  @relation(fields: [sheetId], references: [id])
+  User     User    @relation(fields: [userId], references: [id])
+  Sheet    Sheet?  @relation(fields: [sheetId], references: [id])
 }
 
 enum Cardio {
@@ -88,11 +89,11 @@ enum Cardio {
   SWIMMING
 }
 
-model Journals {
+model Journal {
   id        Int      @id @default(autoincrement())
   userId    Int
   text      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Users     Users    @relation(fields: [userId], references: [id])
+  User     User    @relation(fields: [userId], references: [id])
 }

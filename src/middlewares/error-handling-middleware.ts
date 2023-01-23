@@ -1,8 +1,8 @@
 import { ApplicationError } from "@/protocols";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 
-export function handleApplicationErrors(err: ApplicationError, req: Request, res: Response) {
+export function handleApplicationErrors(err: ApplicationError | Error, req: Request, res: Response, next: NextFunction) {
   if (err.name === "BadRequestError") {
     return res.status(httpStatus.BAD_REQUEST).send({
       message: err.message,
@@ -31,4 +31,6 @@ export function handleApplicationErrors(err: ApplicationError, req: Request, res
     error: "InternalServerError",
     message: "Internal Server Error",
   });
+
+  return next();
 }
