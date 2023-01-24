@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 async function createUser({ email, password }: UserParams): Promise<User> {
   await checkIfUserWithEmailAlreadyExists(email);
 
-  const hashedPassword = await bcrypt.hash(password, 12);
+  const hashedPassword = bcrypt.hashSync(password, 10);
 
   const user = await authRepository.createUser({
     email,
