@@ -1,4 +1,4 @@
-import { SignInParams, SignUpParams } from "@/types/auth-types";
+import { OAuthParams, SignInParams, SignUpParams } from "@/types/auth-types";
 import Joi from "joi";
 
 export const signUpSchema = Joi.object<SignUpParams>({
@@ -10,4 +10,9 @@ export const signUpSchema = Joi.object<SignUpParams>({
 export const signInSchema = Joi.object<SignInParams>({
   email: Joi.string().email().required(),
   password: Joi.string().required(),
+});
+
+export const oAuthSchema = Joi.object<OAuthParams>({
+  email: Joi.string().email().required(),
+  name: Joi.string().required(),
 });

@@ -1,9 +1,10 @@
 import { conflictError, unauthorizedError } from "@/errors";
 import { authRepository } from "@/repositories";
-import { SignInParams, SignUpParams } from "@/types";
+import { OAuthParams, SignInParams, SignUpParams } from "@/types";
 import { User } from "@prisma/client";
 import bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
+import { v4 as uuid } from "uuid";
 
 async function createUser({
   email,
@@ -45,6 +46,40 @@ async function signUserIn({ email, password }: SignInParams): Promise<{
   };
 }
 
+async function signUserInWithOAuth({ name, email }: OAuthParams): Promise<{
+  id: number;
+  name: string;
+  token: string;
+}> {
+  const user = await authRepository.findUserByEmail(email);
+
+  if (!user) {
+    const randomPassword = uuid();
+    const hashedPassword = bcrypt.hashSync(randomPassword, 10);
+    const createdUser = await authRepository.createUser({
+      name,
+      email,
+      password: hashedPassword,
+    });
+
+    const token = await createSession(createdUser.id);
+
+    return {
+      id: user.id,
+      name: user.name,
+      token,
+    };
+  }
+
+  const token = await createSession(user.id);
+
+  return {
+    id: user.id,
+    name: user.name,
+    token,
+  };
+}
+
 async function checkIfUserWithEmailAlreadyExists(email: string) {
   const existingUser = await authRepository.findUserByEmail(email);
 
@@ -67,4 +102,4 @@ async function createSession(userId: number) {
   return token;
 }
 
-export const authService = { createUser, signUserIn };
+export const authService = { createUser, signUserIn, signUserInWithOAuth };

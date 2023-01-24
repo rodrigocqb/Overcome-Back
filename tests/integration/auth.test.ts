@@ -13,7 +13,6 @@ import { cleanDb } from "../helpers";
 
 beforeAll(async () => {
   await init();
-  await cleanDb();
 });
 
 beforeEach(async () => {
