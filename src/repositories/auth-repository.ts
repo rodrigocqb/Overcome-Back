@@ -1,5 +1,5 @@
 import { prisma } from "@/config";
-import { SignUpParams } from "@/types/auth-types";
+import { SessionParams, SignUpParams } from "@/types";
 
 async function findUserByEmail(email: string) {
   return prisma.user.findFirst({
@@ -15,6 +15,10 @@ async function createUser(data: SignUpParams) {
   });
 }
 
-const authRepository = { findUserByEmail, createUser };
+async function createSession(data: SessionParams) {
+  return prisma.session.create({
+    data,
+  });
+}
 
-export default authRepository;
+export const authRepository = { findUserByEmail, createUser, createSession };

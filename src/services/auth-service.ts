@@ -1,11 +1,18 @@
-import { conflictError } from "@/errors";
-import authRepository from "@/repositories/auth-repository";
-import { SignUpParams } from "@/types/auth-types";
-import { User } from "@prisma/client";
+import { conflictError, unauthorizedError } from "@/errors";
+import { authRepository } from "@/repositories";
+import { SignInParams, SignUpParams } from "@/types";
+import { Session, User } from "@prisma/client";
 import bcrypt from "bcrypt";
+import * as jwt from "jsonwebtoken";
 
-async function createUser({ email, name, password }: SignUpParams): Promise<User> {
-  await checkIfUserWithEmailAlreadyExists(email);
+async function createUser({
+  email,
+  name,
+  password,
+}: SignUpParams): Promise<User> {
+  const existingUser = await checkIfUserWithEmailAlreadyExists(email);
+
+  if (existingUser) throw conflictError();
 
   const hashedPassword = bcrypt.hashSync(password, 10);
 
@@ -18,12 +25,46 @@ async function createUser({ email, name, password }: SignUpParams): Promise<User
   return user;
 }
 
+async function signUserIn({ email, password }: SignInParams): Promise<{
+  id: number;
+  name: string;
+  token: string;
+}> {
+  const user = await checkIfUserWithEmailAlreadyExists(email);
+
+  if (!user) throw unauthorizedError();
+
+  validatePassword(password, user.password);
+
+  const token = await createSession(user.id);
+
+  return {
+    id: user.id,
+    name: user.name,
+    token,
+  };
+}
+
 async function checkIfUserWithEmailAlreadyExists(email: string) {
   const existingUser = await authRepository.findUserByEmail(email);
 
-  if (existingUser) throw conflictError();
+  return existingUser;
 }
 
-const authService = { createUser };
+function validatePassword(password: string, userPassword: string) {
+  const isPasswordValid = bcrypt.compareSync(password, userPassword);
 
-export default authService;
+  if (!isPasswordValid) throw unauthorizedError();
+}
+
+async function createSession(userId: number) {
+  const token = jwt.sign({ userId }, process.env.JWT_SECRET);
+  await authRepository.createSession({
+    token,
+    userId,
+  });
+
+  return token;
+}
+
+export const authService = { createUser, signUserIn };

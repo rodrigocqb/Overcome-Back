@@ -1,10 +1,12 @@
-import { postSignUp } from "@/controllers";
+import { postSignIn, postSignUp } from "@/controllers";
 import { validateBody } from "@/middlewares";
-import { signUpSchema } from "@/schemas";
+import { signInSchema, signUpSchema } from "@/schemas";
 import { Router } from "express";
 
 const authRouter = Router();
 
-authRouter.post("/sign-up", validateBody(signUpSchema), postSignUp);
+authRouter
+  .post("/sign-up", validateBody(signUpSchema), postSignUp)
+  .post("/sign-in", validateBody(signInSchema), postSignIn);
 
 export { authRouter };
