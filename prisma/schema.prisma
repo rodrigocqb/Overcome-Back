@@ -11,6 +11,7 @@ datasource db {
 model User {
   id         Int         @id @default(autoincrement())
   email      String      @unique @db.VarChar(255)
+  name       String      @db.VarChar(255)
   password   String      @db.VarChar(255)
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
@@ -47,6 +48,7 @@ model Exercise {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   SheetExercise SheetExercise[]
+  @@index([name])
 }
 
 model Sheet {

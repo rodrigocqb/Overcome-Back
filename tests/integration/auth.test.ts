@@ -66,11 +66,12 @@ describe("POST /users/sign-up", () => {
       const user = await prisma.user.findUnique({
         where: { email: body.email },
       });
-      
+
       expect(user).toEqual(
         expect.objectContaining({
           id: expect.any(Number),
           email: body.email,
+          name: body.name,
         }),
       );
     });

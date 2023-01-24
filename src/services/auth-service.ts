@@ -4,13 +4,14 @@ import { UserParams } from "@/types/auth-types";
 import { User } from "@prisma/client";
 import bcrypt from "bcrypt";
 
-async function createUser({ email, password }: UserParams): Promise<User> {
+async function createUser({ email, name, password }: UserParams): Promise<User> {
   await checkIfUserWithEmailAlreadyExists(email);
 
   const hashedPassword = bcrypt.hashSync(password, 10);
 
   const user = await authRepository.createUser({
     email,
+    name,
     password: hashedPassword,
   });
 

@@ -4,9 +4,9 @@ import { Request, Response } from "express";
 import httpStatus from "http-status";
 
 export async function postSignUp(req: Request, res: Response) {
-  const { email, password } = req.body as UserParams;
+  const { email, name, password } = req.body as UserParams;
 
-  await authService.createUser({ email, password });
+  await authService.createUser({ email, name, password });
 
   return res.sendStatus(httpStatus.CREATED);
 }
