@@ -56,17 +56,17 @@ async function signUserInWithOAuth({ name, email }: OAuthParams): Promise<{
   if (!user) {
     const randomPassword = uuid();
     const hashedPassword = bcrypt.hashSync(randomPassword, 10);
-    const createdUser = await authRepository.createUser({
+    const newUser = await authRepository.createUser({
       name,
       email,
       password: hashedPassword,
     });
 
-    const token = await createSession(createdUser.id);
+    const token = await createSession(newUser.id);
 
     return {
-      id: user.id,
-      name: user.name,
+      id: newUser.id,
+      name: newUser.name,
       token,
     };
   }
