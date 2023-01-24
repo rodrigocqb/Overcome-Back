@@ -1,7 +1,7 @@
 import { conflictError, unauthorizedError } from "@/errors";
 import { authRepository } from "@/repositories";
 import { SignInParams, SignUpParams } from "@/types";
-import { Session, User } from "@prisma/client";
+import { User } from "@prisma/client";
 import bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 

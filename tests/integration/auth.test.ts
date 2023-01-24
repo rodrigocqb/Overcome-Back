@@ -4,7 +4,11 @@ import { conflictError } from "@/errors";
 import { faker } from "@faker-js/faker";
 import httpStatus from "http-status";
 import supertest from "supertest";
-import { createUser, generateValidUserBody } from "../factories";
+import {
+  createUser,
+  generateValidLoginBody,
+  generateValidUserBody,
+} from "../factories";
 import { cleanDb } from "../helpers";
 
 beforeAll(async () => {
@@ -49,7 +53,7 @@ describe("POST /users/sign-up", () => {
       expect(response.body.message).toEqual(conflictError().message);
     });
 
-    it("should respond with status 201 and create user when given email is unique", async () => {
+    it("should respond with status 201", async () => {
       const body = generateValidUserBody();
 
       const response = await server.post("/users/sign-up").send(body);
@@ -74,6 +78,74 @@ describe("POST /users/sign-up", () => {
           name: body.name,
         }),
       );
+    });
+  });
+});
+
+describe("POST /users/sign-in", () => {
+  it("should respond with status 400 when body is not given", async () => {
+    const response = await server.post("/users/sign-in");
+
+    expect(response.status).toBe(httpStatus.BAD_REQUEST);
+  });
+
+  it("should respond with status 400 when body is not valid", async () => {
+    const invalidBody = { [faker.lorem.word()]: faker.lorem.word() };
+
+    const response = await server.post("/users/sign-in").send(invalidBody);
+
+    expect(response.status).toBe(httpStatus.BAD_REQUEST);
+  });
+
+  describe("when body is valid", () => {
+    it("should respond with status 401 if there is no user for given email", async () => {
+      const body = generateValidLoginBody();
+
+      const response = await server.post("/users/sign-in").send(body);
+
+      expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+    });
+
+    it("should respond with status 401 if there is a user for given email but password is not correct", async () => {
+      const body = generateValidLoginBody();
+      await createUser(body);
+
+      const response = await server.post("/users/sign-in").send({
+        ...body,
+        password: faker.lorem.word(),
+      });
+
+      expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+    });
+
+    describe("when credentials are valid", () => {
+      it("should respond with status 200 and body should contain user data and token", async () => {
+        const body = generateValidLoginBody();
+        const user = await createUser(body);
+
+        const response = await server.post("/users/sign-in").send(body);
+
+        expect(response.status).toBe(httpStatus.OK);
+        expect(response.body).toEqual({
+          id: user.id,
+          name: user.name,
+          token: expect.any(String),
+        });
+      });
+
+      it("should save session on database", async () => {
+        const body = generateValidLoginBody();
+        await createUser(body);
+
+        const beforeCount = await prisma.session.count();
+
+        await server.post("/users/sign-in").send(body);
+
+        const afterCount = await prisma.session.count();
+
+        expect(beforeCount).toEqual(0);
+        expect(afterCount).toEqual(1);
+      });
     });
   });
 });
