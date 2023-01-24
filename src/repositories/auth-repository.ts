@@ -1,5 +1,5 @@
 import { prisma } from "@/config";
-import { UserParams } from "@/types/auth-types";
+import { SignUpParams } from "@/types/auth-types";
 
 async function findUserByEmail(email: string) {
   return prisma.user.findFirst({
@@ -9,7 +9,7 @@ async function findUserByEmail(email: string) {
   });
 }
 
-async function createUser(data: UserParams) {
+async function createUser(data: SignUpParams) {
   return prisma.user.create({
     data,
   });

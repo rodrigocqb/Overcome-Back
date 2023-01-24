@@ -1,3 +1,3 @@
 import { User } from "@prisma/client";
 
-export type UserParams = Pick<User, "email" | "name" | "password">;
+export type SignUpParams = Pick<User, "email" | "name" | "password">;

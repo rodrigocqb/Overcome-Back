@@ -1,10 +1,10 @@
 import authService from "@/services/auth-service";
-import { UserParams } from "@/types/auth-types";
+import { SignUpParams } from "@/types/auth-types";
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 
 export async function postSignUp(req: Request, res: Response) {
-  const { email, name, password } = req.body as UserParams;
+  const { email, name, password } = req.body as SignUpParams;
 
   await authService.createUser({ email, name, password });
 

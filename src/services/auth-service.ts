@@ -1,10 +1,10 @@
 import { conflictError } from "@/errors";
 import authRepository from "@/repositories/auth-repository";
-import { UserParams } from "@/types/auth-types";
+import { SignUpParams } from "@/types/auth-types";
 import { User } from "@prisma/client";
 import bcrypt from "bcrypt";
 
-async function createUser({ email, name, password }: UserParams): Promise<User> {
+async function createUser({ email, name, password }: SignUpParams): Promise<User> {
   await checkIfUserWithEmailAlreadyExists(email);
 
   const hashedPassword = bcrypt.hashSync(password, 10);
