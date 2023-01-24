@@ -2,10 +2,7 @@
   "name": "overcome-back",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/app.js",
-  "directories": {
-    "test": "tests"
-  },
+  "main": "dist/server.js",
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "ttsc -p tsconfig.build.json",
