@@ -2,7 +2,7 @@ import { conflictError, notFoundError } from "@/errors";
 import { exerciseRepository } from "@/repositories";
 import { Exercise } from "@prisma/client";
 
-async function getExercisesList(): Promise<Exercise[]> {
+async function getExerciseList(): Promise<Exercise[]> {
   const exercises = await exerciseRepository.findExercises();
   return exercises;
 }
@@ -26,7 +26,7 @@ async function createNewExercise(name: string): Promise<Exercise> {
 }
 
 export const exerciseService = {
-  getExercisesList,
+  getExerciseList,
   searchExercises,
   createNewExercise,
 };

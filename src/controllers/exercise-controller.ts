@@ -5,7 +5,7 @@ import { Response } from "express";
 import httpStatus from "http-status";
 
 export async function getExercises(req: AuthenticatedRequest, res: Response) {
-  const exercises = await exerciseService.getExercisesList();
+  const exercises = await exerciseService.getExerciseList();
 
   return res.status(httpStatus.OK).send(exercises);
 }
