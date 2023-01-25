@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
   engineType = "binary"
 }
 
@@ -9,12 +9,12 @@ datasource db {
 }
 
 model User {
-  id         Int         @id @default(autoincrement())
-  email      String      @unique @db.VarChar(255)
-  name       String      @db.VarChar(255)
-  password   String      @db.VarChar(255)
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id        Int        @id @default(autoincrement())
+  email     String     @unique @db.VarChar(255)
+  name      String     @db.VarChar(255)
+  password  String     @db.VarChar(255)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   Journal   Journal[]
   Objective Objective?
   Session   Session[]
@@ -28,50 +28,51 @@ model Session {
   token     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  User     User    @relation(fields: [userId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
 }
 
 model Objective {
   id            Int      @id @default(autoincrement())
   userId        Int      @unique
   title         String?
-  currentWeight Decimal? @db.Decimal
-  goalWeight    Decimal? @db.Decimal
+  currentWeight Int
+  goalWeight    Int
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  User         User    @relation(fields: [userId], references: [id])
+  User          User     @relation(fields: [userId], references: [id])
 }
 
 model Exercise {
-  id              Int               @id @default(autoincrement())
-  name            String            @unique @db.VarChar(255)
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  id            Int             @id @default(autoincrement())
+  name          String          @unique @db.VarChar(255)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   SheetExercise SheetExercise[]
+
   @@index([name])
 }
 
 model Sheet {
-  id              Int               @id @default(autoincrement())
-  userId          Int
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  User           User             @relation(fields: [userId], references: [id])
+  id            Int             @id @default(autoincrement())
+  userId        Int
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  User          User            @relation(fields: [userId], references: [id])
   SheetExercise SheetExercise[]
-  Workout        Workout[]
+  Workout       Workout[]
 }
 
 model SheetExercise {
-  id         Int       @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   exerciseId Int
   sheetId    Int
-  weight     Decimal   @default(0) @db.Decimal
+  weight     Int      @default(0)
   reps       Int
   sets       Int
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  Exercise  Exercise @relation(fields: [exerciseId], references: [id])
-  Sheet     Sheet    @relation(fields: [sheetId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  Exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  Sheet      Sheet    @relation(fields: [sheetId], references: [id])
 }
 
 model Workout {
@@ -81,8 +82,8 @@ model Workout {
   cardio    Cardio?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  User     User    @relation(fields: [userId], references: [id])
-  Sheet    Sheet?  @relation(fields: [sheetId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
+  Sheet     Sheet?   @relation(fields: [sheetId], references: [id])
 }
 
 enum Cardio {
@@ -97,5 +98,5 @@ model Journal {
   text      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  User     User    @relation(fields: [userId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
 }
