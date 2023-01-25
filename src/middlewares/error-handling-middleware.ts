@@ -15,6 +15,12 @@ export function handleApplicationErrors(err: ApplicationError | Error, req: Requ
     });
   }
 
+  if (err.name === "ForbiddenError") {
+    return res.status(httpStatus.FORBIDDEN).send({
+      message: err.message,
+    });
+  }
+
   if (err.name === "NotFoundError") {
     return res.status(httpStatus.NOT_FOUND).send({
       message: err.message,

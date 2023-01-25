@@ -1,4 +1,5 @@
 import { notFoundError } from "@/errors";
+import { forbiddenError } from "@/errors/forbidden-error";
 import { objectiveRepository } from "@/repositories";
 import { ObjectiveParams } from "@/types";
 import { Objective } from "@prisma/client";
@@ -15,6 +16,9 @@ async function createUserObjective({
   currentWeight,
   goalWeight,
 }: ObjectiveParams): Promise<Objective> {
+  const existingObjective = await objectiveRepository.findObjectiveByUserId(userId);
+  if (existingObjective) throw forbiddenError();
+
   const objective = await objectiveRepository.createUserObjective({
     userId,
     title,

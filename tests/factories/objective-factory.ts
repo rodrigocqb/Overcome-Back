@@ -12,3 +12,11 @@ export async function createObjective(user: User) {
     },
   });
 }
+
+export function createValidObjectiveBody() {
+  return {
+    title: faker.lorem.sentence(),
+    currentWeight: faker.datatype.number(),
+    goalWeight: faker.datatype.number(),
+  };
+}

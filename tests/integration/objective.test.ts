@@ -4,7 +4,11 @@ import { faker } from "@faker-js/faker";
 import httpStatus from "http-status";
 import supertest from "supertest";
 import * as jwt from "jsonwebtoken";
-import { createObjective, createUser } from "../factories";
+import {
+  createObjective,
+  createUser,
+  createValidObjectiveBody,
+} from "../factories";
 import { cleanDb, generateValidToken } from "../helpers";
 
 beforeAll(async () => {
@@ -82,6 +86,112 @@ describe("GET /objectives", () => {
         goalWeight: objective.goalWeight,
         createdAt: objective.createdAt.toISOString(),
         updatedAt: objective.updatedAt.toISOString(),
+      });
+    });
+  });
+});
+
+describe("POST /objectives", () => {
+  it("should respond with status 401 if no token is given", async () => {
+    const response = await server.post("/objectives").send({});
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  it("should respond with status 401 if given token is not valid", async () => {
+    const token = faker.lorem.word();
+
+    const response = await server
+      .post("/objectives")
+      .set("Authorization", `Bearer ${token}`)
+      .send({});
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  it("should respond with status 401 if there is no session for given token", async () => {
+    const userWithoutSession = await createUser();
+    const token = jwt.sign(
+      { userId: userWithoutSession.id },
+      process.env.JWT_SECRET,
+    );
+
+    const response = await server
+      .post("/objectives")
+      .set("Authorization", `Bearer ${token}`)
+      .send({});
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  describe("when given token is valid", () => {
+    it("should respond with status 400 when body is not valid", async () => {
+      const token = await generateValidToken();
+      const invalidBody = { [faker.lorem.word()]: faker.lorem.word() };
+
+      const response = await server
+        .post("/objectives")
+        .set("Authorization", `Bearer ${token}`)
+        .send(invalidBody);
+
+      expect(response.status).toBe(httpStatus.BAD_REQUEST);
+    });
+
+    describe("when body is valid", () => {
+      it("should respond with status 403 when user already has an objective", async () => {
+        const user = await createUser();
+        const token = await generateValidToken(user);
+        const body = createValidObjectiveBody();
+        await createObjective(user);
+
+        const response = await server
+          .post("/objectives")
+          .set("Authorization", `Bearer ${token}`)
+          .send(body);
+
+        expect(response.status).toBe(httpStatus.FORBIDDEN);
+      });
+
+      describe("when user does not have an objective yet", () => {
+        it("should respond with status 201 and objective data", async () => {
+          const user = await createUser();
+          const token = await generateValidToken(user);
+          const body = createValidObjectiveBody();
+
+          const response = await server
+            .post("/objectives")
+            .set("Authorization", `Bearer ${token}`)
+            .send(body);
+
+          expect(response.status).toBe(httpStatus.CREATED);
+          expect(response.body).toEqual(
+            expect.objectContaining({
+              id: expect.any(Number),
+              userId: user.id,
+              title: body.title,
+              currentWeight: body.currentWeight,
+              goalWeight: body.goalWeight,
+            }),
+          );
+        });
+
+        it("should save objective on database", async () => {
+          const user = await createUser();
+          const token = await generateValidToken(user);
+          const body = createValidObjectiveBody();
+
+          const beforeCount = await prisma.objective.count();
+
+          await server
+            .post("/objectives")
+            .set("Authorization", `Bearer ${token}`)
+            .send(body);
+
+          const afterCount = await prisma.objective.count();
+
+          expect(beforeCount).toEqual(0);
+          expect(afterCount).toEqual(1);
+        });
       });
     });
   });
