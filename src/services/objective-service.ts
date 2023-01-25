@@ -4,9 +4,7 @@ import { ObjectiveParams } from "@/types";
 import { Objective } from "@prisma/client";
 
 async function getObjectiveByUserId(userId: number): Promise<Objective> {
-  const objective = await objectiveRepository.findObjectiveByUserId(userId);
-
-  if (!objective) throw notFoundError();
+  const objective = await checkIfObjectiveExists(userId);
 
   return objective;
 }
@@ -33,12 +31,22 @@ async function updateUserObjective({
   currentWeight,
   goalWeight,
 }: ObjectiveParams): Promise<Objective> {
+  await checkIfObjectiveExists(userId);
+
   const objective = await objectiveRepository.updateUserObjective({
     userId,
     title,
     currentWeight,
     goalWeight,
   });
+
+  return objective;
+}
+
+async function checkIfObjectiveExists(userId: number): Promise<Objective> {
+  const objective = await objectiveRepository.findObjectiveByUserId(userId);
+
+  if (!objective) throw notFoundError();
 
   return objective;
 }
