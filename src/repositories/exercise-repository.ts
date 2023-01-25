@@ -1,7 +1,20 @@
-import { prisma } from "@/config";
+import { prisma, redis } from "@/config";
+import { Exercise } from "@prisma/client";
 
 async function findExercises() {
-  return prisma.exercise.findMany();
+  let exercises: Exercise[] = JSON.parse(await redis.get("exercises"));
+
+  if (!exercises) {
+    const day = 86400;
+
+    exercises = await prisma.exercise.findMany();
+
+    await redis.set("exercises", JSON.stringify(exercises), {
+      EX: day,
+    });
+  }
+
+  return exercises;
 }
 
 async function findExercisesBySearchParam(searchParam: string) {
@@ -28,6 +41,7 @@ async function findExerciseByName(name: string) {
 }
 
 async function createExercise(name: string) {
+  redis.del("exercises");
   return prisma.exercise.create({
     data: {
       name,
