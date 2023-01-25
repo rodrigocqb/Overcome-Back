@@ -85,3 +85,67 @@ describe("GET /exercises", () => {
     });
   });
 });
+
+describe("GET /exercises/:searchParam", () => {
+  it("should respond with status 401 if no token is given", async () => {
+    const response = await server.get("/exercises/squat");
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  it("should respond with status 401 if given token is not valid", async () => {
+    const token = faker.lorem.word();
+
+    const response = await server
+      .get("/exercises/squat")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  it("should respond with status 401 if there is no session for given token", async () => {
+    const userWithoutSession = await createUser();
+    const token = jwt.sign(
+      { userId: userWithoutSession.id },
+      process.env.JWT_SECRET,
+    );
+
+    const response = await server
+      .get("/exercises/squat")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  describe("when given token is valid", () => {
+    it("should respond with status 404 if there are no matching exercises", async () => {
+      const token = await generateValidToken();
+
+      const response = await server
+        .get("/exercises/squat")
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(response.status).toBe(httpStatus.NOT_FOUND);
+    });
+
+    it("should respond with status 200 and exercise list if there are matching exercises", async () => {
+      const token = await generateValidToken();
+      const exercise = await createExercise("squat");
+
+      const response = await server
+        .get("/exercises/qUa")
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(response.status).toBe(httpStatus.OK);
+      expect(response.body).toEqual([
+        {
+          id: exercise.id,
+          name: exercise.name,
+          createdAt: exercise.createdAt.toISOString(),
+          updatedAt: exercise.updatedAt.toISOString(),
+        },
+      ]);
+    });
+  });
+});
+

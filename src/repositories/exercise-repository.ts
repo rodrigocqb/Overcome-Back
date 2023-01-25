@@ -19,7 +19,10 @@ async function findExercisesBySearchParam(searchParam: string) {
 async function findExerciseByName(name: string) {
   return prisma.exercise.findFirst({
     where: {
-      name,
+      name: {
+        equals: name,
+        mode: "insensitive",
+      },
     },
   });
 }
