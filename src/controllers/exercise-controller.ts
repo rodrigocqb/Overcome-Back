@@ -1,5 +1,6 @@
 import { AuthenticatedRequest } from "@/middlewares";
 import { exerciseService } from "@/services";
+import { ExerciseParams } from "@/types";
 import { Response } from "express";
 import httpStatus from "http-status";
 
@@ -18,4 +19,15 @@ export async function getExercisesBySearchParam(
   const exercises = await exerciseService.searchExercises(searchParam);
 
   return res.status(httpStatus.OK).send(exercises);
+}
+
+export async function postCreateExercise(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  const { name } = req.body as ExerciseParams;
+
+  const exercise = await exerciseService.createNewExercise(name);
+
+  return res.status(httpStatus.CREATED).send(exercise);
 }

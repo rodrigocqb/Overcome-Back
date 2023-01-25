@@ -1,5 +1,9 @@
-import { getExercises, getExercisesBySearchParam } from "@/controllers";
-import { authenticateToken, validateParams } from "@/middlewares";
+import {
+  getExercises,
+  getExercisesBySearchParam,
+  postCreateExercise,
+} from "@/controllers";
+import { authenticateToken, validateBody, validateParams } from "@/middlewares";
 import { exerciseSchema } from "@/schemas";
 import { Router } from "express";
 
@@ -12,6 +16,7 @@ exerciseRouter
     "/:searchParam",
     validateParams(exerciseSchema),
     getExercisesBySearchParam,
-  );
+  )
+  .post("/", validateBody(exerciseSchema), postCreateExercise);
 
 export { exerciseRouter };
