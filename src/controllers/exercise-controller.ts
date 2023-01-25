@@ -8,3 +8,14 @@ export async function getExercises(req: AuthenticatedRequest, res: Response) {
 
   return res.status(httpStatus.OK).send(exercises);
 }
+
+export async function getExercisesBySearchParam(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  const { searchParam } = req.params;
+
+  const exercises = await exerciseService.searchExercises(searchParam);
+
+  return res.status(httpStatus.OK).send(exercises);
+}
