@@ -7,7 +7,9 @@ export function validateBody<T>(schema: ObjectSchema<T>): ValidationMiddleware {
   return validate(schema, "body");
 }
 
-export function validateParams<T>(schema: ObjectSchema<T>): ValidationMiddleware {
+export function validateParams<T>(
+  schema: ObjectSchema<T>,
+): ValidationMiddleware {
   return validate(schema, "params");
 }
 
@@ -20,9 +22,15 @@ function validate(schema: ObjectSchema, type: "body" | "params") {
     if (!error) {
       next();
     } else {
-      res.status(httpStatus.BAD_REQUEST).send(badRequestError(error.details.map((d) => d.message)));
+      res
+        .status(httpStatus.BAD_REQUEST)
+        .send(badRequestError(error.details.map((d) => d.message)));
     }
   };
 }
 
-type ValidationMiddleware = (req: Request, res: Response, next: NextFunction)=> void;
+type ValidationMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+)=> void;

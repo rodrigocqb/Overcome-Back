@@ -16,4 +16,16 @@ async function findExercisesBySearchParam(searchParam: string) {
   });
 }
 
-export const exerciseRepository = { findExercises, findExercisesBySearchParam };
+async function createExercise(name: string) {
+  return prisma.exercise.create({
+    data: {
+      name,
+    },
+  });
+}
+
+export const exerciseRepository = {
+  findExercises,
+  findExercisesBySearchParam,
+  createExercise,
+};
