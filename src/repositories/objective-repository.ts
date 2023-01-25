@@ -15,7 +15,17 @@ async function createUserObjective(data: ObjectiveParams) {
   });
 }
 
+async function updateUserObjective({ userId, ...data }: ObjectiveParams) {
+  return prisma.objective.update({
+    where: {
+      userId,
+    },
+    data,
+  });
+}
+
 export const objectiveRepository = {
   findObjectiveByUserId,
   createUserObjective,
+  updateUserObjective,
 };

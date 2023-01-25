@@ -27,4 +27,24 @@ async function createUserObjective({
   return objective;
 }
 
-export const objectiveService = { getObjectiveByUserId, createUserObjective };
+async function updateUserObjective({
+  userId,
+  title,
+  currentWeight,
+  goalWeight,
+}: ObjectiveParams): Promise<Objective> {
+  const objective = await objectiveRepository.updateUserObjective({
+    userId,
+    title,
+    currentWeight,
+    goalWeight,
+  });
+
+  return objective;
+}
+
+export const objectiveService = {
+  getObjectiveByUserId,
+  createUserObjective,
+  updateUserObjective,
+};
