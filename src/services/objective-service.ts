@@ -1,5 +1,6 @@
 import { notFoundError } from "@/errors";
 import { objectiveRepository } from "@/repositories";
+import { ObjectiveParams } from "@/types";
 import { Objective } from "@prisma/client";
 
 async function getObjectiveByUserId(userId: number): Promise<Objective> {
@@ -10,4 +11,20 @@ async function getObjectiveByUserId(userId: number): Promise<Objective> {
   return objective;
 }
 
-export const objectiveService = { getObjectiveByUserId };
+async function createUserObjective({
+  userId,
+  title,
+  currentWeight,
+  goalWeight,
+}: ObjectiveParams): Promise<Objective> {
+  const objective = await objectiveRepository.createUserObjective({
+    userId,
+    title,
+    currentWeight,
+    goalWeight,
+  });
+
+  return objective;
+}
+
+export const objectiveService = { getObjectiveByUserId, createUserObjective };
