@@ -8,3 +8,9 @@ export async function createExercise(name: string | undefined = undefined) {
     },
   });
 }
+
+export function createValidExerciseBody(name: string | undefined = undefined) {
+  return {
+    name: name || faker.lorem.word(),
+  };
+}

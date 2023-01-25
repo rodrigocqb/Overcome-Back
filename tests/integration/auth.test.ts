@@ -143,8 +143,8 @@ describe("POST /users/sign-in", () => {
 
         const afterCount = await prisma.session.count();
 
-        expect(beforeCount).toEqual(0);
-        expect(afterCount).toEqual(1);
+        expect(beforeCount).toBe(0);
+        expect(afterCount).toBe(1);
       });
     });
   });
@@ -189,8 +189,8 @@ describe("POST /users/oauth", () => {
 
         const afterCount = await prisma.user.count();
 
-        expect(beforeCount).toEqual(0);
-        expect(afterCount).toEqual(1);
+        expect(beforeCount).toBe(0);
+        expect(afterCount).toBe(1);
       });
   
       it("should save session on database", async () => {
@@ -202,8 +202,8 @@ describe("POST /users/oauth", () => {
   
         const afterCount = await prisma.session.count();
   
-        expect(beforeCount).toEqual(0);
-        expect(afterCount).toEqual(1);
+        expect(beforeCount).toBe(0);
+        expect(afterCount).toBe(1);
       });
     });
 
@@ -232,8 +232,8 @@ describe("POST /users/oauth", () => {
   
         const afterCount = await prisma.session.count();
   
-        expect(beforeCount).toEqual(0);
-        expect(afterCount).toEqual(1);
+        expect(beforeCount).toBe(0);
+        expect(afterCount).toBe(1);
       });
     });
   });

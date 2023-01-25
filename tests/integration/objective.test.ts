@@ -189,8 +189,8 @@ describe("POST /objectives", () => {
 
           const afterCount = await prisma.objective.count();
 
-          expect(beforeCount).toEqual(0);
-          expect(afterCount).toEqual(1);
+          expect(beforeCount).toBe(0);
+          expect(afterCount).toBe(1);
         });
       });
     });
