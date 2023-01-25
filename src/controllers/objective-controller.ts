@@ -43,5 +43,5 @@ export async function putUpdateObjective(
     goalWeight,
   });
 
-  return res.status(httpStatus.NO_CONTENT).send(objective);
+  return res.status(httpStatus.OK).send(objective);
 }
