@@ -5,6 +5,9 @@ async function findWorkoutsByUserId(userId: number) {
     where: {
       userId,
     },
+    include: {
+      Sheet: true,
+    },
     take: 10,
   });
 }
