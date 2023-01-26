@@ -26,3 +26,20 @@ export async function postCreateJournal(
 
   return res.status(httpStatus.CREATED).send(journal);
 }
+
+export async function putUpdateJournal(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  const { userId } = req;
+  const { text } = req.body as JournalBody;
+  const journalId = Number(req.params.journalId);
+
+  const updatedJournal = await journalService.updateJournalById({
+    userId,
+    journalId,
+    text,
+  });
+
+  return res.status(httpStatus.OK).send(updatedJournal);
+}

@@ -1,4 +1,8 @@
-import { getJournalsByUserId, postCreateJournal } from "@/controllers";
+import {
+  getJournalsByUserId,
+  postCreateJournal,
+  putUpdateJournal,
+} from "@/controllers";
 import { authenticateToken, validateBody, validateParams } from "@/middlewares";
 import { journalParamsSchema, journalSchema } from "@/schemas";
 import { Router } from "express";
@@ -13,6 +17,7 @@ journalRouter
     "/:journalId",
     validateParams(journalParamsSchema),
     validateBody(journalSchema),
+    putUpdateJournal,
   )
   .delete("/:journalId", validateParams(journalParamsSchema));
 
