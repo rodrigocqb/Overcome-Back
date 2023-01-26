@@ -8,6 +8,7 @@ import { cleanDb, generateValidToken } from "../helpers";
 import {
   createExercise,
   createSheet,
+  createSheetExercise,
   createUser,
   createValidSheetBody,
   createValidSheetExerciseBody,
@@ -228,6 +229,20 @@ describe("PUT /sheets/:sheetId", () => {
       expect(response.status).toBe(httpStatus.BAD_REQUEST);
     });
 
+    it("should respond with status 400 when sheet does not exist - invalid partition", async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const exercise = await createExercise();
+      const body = createValidSheetExerciseBody(exercise);
+
+      const response = await server
+        .put("/sheets/0")
+        .set("Authorization", `Bearer ${token}`)
+        .send(body);
+
+      expect(response.status).toBe(httpStatus.BAD_REQUEST);
+    });
+
     it("should respond with status 400 when body is not valid", async () => {
       const token = await generateValidToken();
       const invalidBody = { [faker.lorem.word()]: faker.lorem.word() };
@@ -241,20 +256,6 @@ describe("PUT /sheets/:sheetId", () => {
     });
 
     describe("when params and body are valid", () => {
-      it("should respond with status 400 when sheet does not exist - invalid partition", async () => {
-        const user = await createUser();
-        const token = await generateValidToken(user);
-        const exercise = await createExercise();
-        const body = createValidSheetExerciseBody(exercise);
-
-        const response = await server
-          .put("/sheets/0")
-          .set("Authorization", `Bearer ${token}`)
-          .send(body);
-
-        expect(response.status).toBe(httpStatus.BAD_REQUEST);
-      });
-
       it("should respond with status 404 when sheet does not exist - valid partition", async () => {
         const user = await createUser();
         const token = await generateValidToken(user);
@@ -320,6 +321,123 @@ describe("PUT /sheets/:sheetId", () => {
 
           expect(beforeCount).toBe(0);
           expect(afterCount).toBe(0);
+        });
+      });
+    });
+  });
+});
+
+describe("DELETE /sheets", () => {
+  it("should respond with status 401 if no token is given", async () => {
+    const response = await server.delete("/sheets");
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  it("should respond with status 401 if given token is not valid", async () => {
+    const token = faker.lorem.word();
+
+    const response = await server
+      .delete("/sheets")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  it("should respond with status 401 if there is no session for given token", async () => {
+    const userWithoutSession = await createUser();
+    const token = jwt.sign(
+      { userId: userWithoutSession.id },
+      process.env.JWT_SECRET,
+    );
+
+    const response = await server
+      .delete("/sheets")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  describe("when given token is valid", () => {
+    it("should respond with status 400 when param is not valid", async () => {
+      const token = await generateValidToken();
+
+      const response = await server
+        .delete("/sheets/a")
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(response.status).toBe(httpStatus.BAD_REQUEST);
+    });
+
+    it("should respond with status 400 when sheet does not exist - invalid partition", async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+
+      const response = await server
+        .delete("/sheets/0")
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(response.status).toBe(httpStatus.BAD_REQUEST);
+    });
+
+    describe("when id param is valid", () => {
+      it("should respond with status 404 when sheet does not exist - valid partition", async () => {
+        const user = await createUser();
+        const token = await generateValidToken(user);
+
+        const response = await server
+          .delete("/sheets/1")
+          .set("Authorization", `Bearer ${token}`);
+
+        expect(response.status).toBe(httpStatus.NOT_FOUND);
+      });
+
+      it("should respond with status 403 when user does not own given sheet", async () => {
+        const user = await createUser();
+        const token = await generateValidToken(user);
+        const sheet = await createSheet();
+
+        const response = await server
+          .delete(`/sheets/${sheet.id}`)
+          .set("Authorization", `Bearer ${token}`);
+
+        expect(response.status).toBe(httpStatus.FORBIDDEN);
+      });
+
+      describe("when sheet exists and is owned by the user", () => {
+        it("should respond with status 204", async () => {
+          const user = await createUser();
+          const token = await generateValidToken(user);
+          const sheet = await createSheet(user);
+
+          const response = await server
+            .delete(`/sheets/${sheet.id}`)
+            .set("Authorization", `Bearer ${token}`);
+
+          expect(response.status).toBe(httpStatus.NO_CONTENT);
+        });
+
+        it("should delete sheet and its exercises", async () => {
+          const user = await createUser();
+          const token = await generateValidToken(user);
+          const sheet = await createSheet(user);
+          await createSheetExercise(sheet);
+
+          const beforeCountSheet = await prisma.sheet.count();
+          const beforeCountSheetExercise = await prisma.sheetExercise.count();
+
+          await server
+            .delete(`/sheets/${sheet.id}`)
+            .set("Authorization", `Bearer ${token}`);
+
+          const afterCountSheet = await prisma.sheet.count();
+          const afterCountSheetExercise = await prisma.sheetExercise.count();
+
+          expect(beforeCountSheet).toBe(1);
+          expect(afterCountSheet).toBe(0);
+
+          expect(beforeCountSheetExercise).toBe(1);
+          expect(afterCountSheetExercise).toBe(0);
         });
       });
     });
