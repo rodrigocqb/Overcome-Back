@@ -14,10 +14,11 @@ async function getWorkoutsByUserId(userId: number): Promise<
 
 async function createWorkout({
   userId,
-  sheetId,
-  cardio,
+  sheetId = null,
+  cardio = null,
 }: { userId: number } & WorkoutBody) {
   if (!sheetId && !cardio) throw badRequestError();
+  if (sheetId && cardio) throw badRequestError();
 
   const workout = workoutRepository.createWorkout({ userId, sheetId, cardio });
 
