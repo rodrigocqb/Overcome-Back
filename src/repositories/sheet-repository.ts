@@ -14,6 +14,9 @@ async function findSheetsByUserId(userId: number) {
       updatedAt: true,
       SheetExercise: {
         select: {
+          sets: true,
+          reps: true,
+          weight: true,
           Exercise: {
             select: {
               id: true,

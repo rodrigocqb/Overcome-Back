@@ -77,7 +77,7 @@ describe("GET /sheets", () => {
       const user = await createUser();
       const token = await generateValidToken(user);
       const sheet = await createSheet(user);
-      await createSheetExercise(sheet);
+      const sheetExercise = await createSheetExercise(sheet);
       const otherSheet = await createSheet();
       await createSheetExercise(otherSheet);
 
@@ -93,12 +93,17 @@ describe("GET /sheets", () => {
           userId: user.id,
           createdAt: sheet.createdAt.toISOString(),
           updatedAt: sheet.updatedAt.toISOString(),
-          SheetExercise: [{
-            Exercise: {
-              id: expect.any(Number),
-              name: expect.any(String),
-            }
-          }]
+          SheetExercise: [
+            {
+              weight: sheetExercise.weight,
+              reps: sheetExercise.reps,
+              sets: sheetExercise.sets,
+              Exercise: {
+                id: expect.any(Number),
+                name: expect.any(String),
+              },
+            },
+          ],
         },
       ]);
     });
