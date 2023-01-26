@@ -4,3 +4,4 @@ export * from "./objective-factory";
 export * from "./exercise-factory";
 export * from "./sheet-factory";
 export * from "./workout-factory";
+export * from "./journal-factory";
