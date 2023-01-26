@@ -174,7 +174,21 @@ describe("PUT /sheets/:sheetId", () => {
     });
 
     describe("when params and body are valid", () => {
-      it("should respond with status 404 when sheet does not exist", async () => {
+      it("should respond with status 400 when sheet does not exist - invalid partition", async () => {
+        const user = await createUser();
+        const token = await generateValidToken(user);
+        const exercise = await createExercise();
+        const body = createValidSheetExerciseBody(exercise);
+
+        const response = await server
+          .put("/sheets/0")
+          .set("Authorization", `Bearer ${token}`)
+          .send(body);
+
+        expect(response.status).toBe(httpStatus.BAD_REQUEST);
+      });
+
+      it("should respond with status 404 when sheet does not exist - valid partition", async () => {
         const user = await createUser();
         const token = await generateValidToken(user);
         const exercise = await createExercise();

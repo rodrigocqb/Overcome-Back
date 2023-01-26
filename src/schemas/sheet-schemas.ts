@@ -7,7 +7,7 @@ export const sheetSchema = Joi.object<SheetBody>({
 
 type SheetIdParams = { sheetId: number };
 export const sheetIdParamsSchema = Joi.object<SheetIdParams>({
-  sheetId: Joi.number().required(),
+  sheetId: Joi.number().integer().positive().required(),
 });
 
 const sheetExerciseSchema = Joi.object<SheetExerciseBody>({
