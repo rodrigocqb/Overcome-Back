@@ -14,10 +14,7 @@ async function insertExercisesIntoSheet({
   sheetId,
   exerciseBody,
 }: InsertExercisesParams): Promise<Prisma.BatchPayload> {
-  const sheet = await sheetRepository.findSheetById(sheetId);
-  if (!sheet) throw notFoundError();
-
-  if (sheet.userId !== userId) throw forbiddenError();
+  await findSheetAndCheckOwnership({ sheetId, userId });
 
   const sheetExercises: SheetExerciseParams[] = exerciseBody.map((value) => ({
     ...value,
@@ -30,10 +27,41 @@ async function insertExercisesIntoSheet({
   return insertCount;
 }
 
-export const sheetService = { createNewSheet, insertExercisesIntoSheet };
+async function deleteSheetById({
+  sheetId,
+  userId,
+}: FindSheetParams): Promise<void> {
+  await findSheetAndCheckOwnership({ sheetId, userId });
+
+  await sheetRepository.deleteSheetById(sheetId);
+  return;
+}
+
+async function findSheetAndCheckOwnership({
+  sheetId,
+  userId,
+}: FindSheetParams) {
+  const sheet = await sheetRepository.findSheetById(sheetId);
+  if (!sheet) throw notFoundError();
+
+  if (sheet.userId !== userId) throw forbiddenError();
+
+  return sheet;
+}
+
+export const sheetService = {
+  createNewSheet,
+  insertExercisesIntoSheet,
+  deleteSheetById,
+};
+
+type FindSheetParams = {
+  sheetId: number;
+  userId: number;
+};
 
 type InsertExercisesParams = {
-  userId: number
+  userId: number;
   sheetId: number;
   exerciseBody: SheetExerciseBody[];
 };

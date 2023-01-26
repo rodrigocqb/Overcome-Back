@@ -21,8 +21,17 @@ async function createSheetExercises(data: SheetExerciseParams[]) {
   });
 }
 
+async function deleteSheetById(id: number) {
+  return prisma.sheet.delete({
+    where: {
+      id,
+    },
+  });
+}
+
 export const sheetRepository = {
   createSheet,
   findSheetById,
   createSheetExercises,
+  deleteSheetById,
 };

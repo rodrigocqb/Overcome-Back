@@ -1,4 +1,8 @@
-import { postCreateSheet, putCreateSheetExercises } from "@/controllers";
+import {
+  deleteSheetById,
+  postCreateSheet,
+  putCreateSheetExercises,
+} from "@/controllers";
 import { authenticateToken, validateBody, validateParams } from "@/middlewares";
 import {
   sheetExerciseListBodySchema,
@@ -17,6 +21,7 @@ sheetRouter
     validateParams(sheetIdParamsSchema),
     validateBody(sheetExerciseListBodySchema),
     putCreateSheetExercises,
-  );
+  )
+  .delete("/:sheetId", validateParams(sheetIdParamsSchema), deleteSheetById);
 
 export { sheetRouter };

@@ -27,8 +27,20 @@ export async function putCreateSheetExercises(
   const insertCount = await sheetService.insertExercisesIntoSheet({
     sheetId,
     exerciseBody,
-    userId
+    userId,
   });
 
   return res.status(httpStatus.OK).send(insertCount);
+}
+
+export async function deleteSheetById(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  const { userId } = req;
+  const sheetId = Number(req.params.sheetId);
+
+  await sheetService.deleteSheetById({ sheetId, userId });
+
+  return res.sendStatus(httpStatus.NO_CONTENT);
 }
