@@ -1,5 +1,5 @@
 import { prisma } from "@/config";
-import { WorkoutBody } from "@/types/workout-types";
+import { WorkoutBody } from "@/types";
 
 export async function createWorkout({
   userId,

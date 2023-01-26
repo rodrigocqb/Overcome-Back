@@ -1,6 +1,6 @@
 import { AuthenticatedRequest } from "@/middlewares";
 import { workoutService } from "@/services";
-import { WorkoutBody } from "@/types/workout-types";
+import { WorkoutBody } from "@/types";
 import { Response } from "express";
 import httpStatus from "http-status";
 

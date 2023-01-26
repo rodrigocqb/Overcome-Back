@@ -1,4 +1,4 @@
-import { WorkoutBody } from "@/types/workout-types";
+import { WorkoutBody } from "@/types";
 import { Cardio } from "@prisma/client";
 import Joi from "joi";
 

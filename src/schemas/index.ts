@@ -3,3 +3,4 @@ export * from "./objective-schemas";
 export * from "./exercise-schemas";
 export * from "./sheet-schemas";
 export * from "./workout-schemas";
+export * from "./journal-schemas";

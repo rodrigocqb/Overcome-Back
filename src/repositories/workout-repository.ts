@@ -1,5 +1,5 @@
 import { prisma } from "@/config";
-import { WorkoutParams } from "@/types/workout-types";
+import { WorkoutParams } from "@/types";
 
 async function findWorkoutsByUserId(userId: number) {
   return prisma.workout.findMany({

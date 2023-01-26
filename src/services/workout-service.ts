@@ -1,6 +1,6 @@
 import { badRequestError } from "@/errors";
 import { workoutRepository } from "@/repositories";
-import { WorkoutBody } from "@/types/workout-types";
+import { WorkoutBody } from "@/types";
 import { Sheet, Workout } from "@prisma/client";
 import { findSheetAndCheckOwnership } from "./sheet-service";
 
