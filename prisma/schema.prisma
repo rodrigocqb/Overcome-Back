@@ -73,7 +73,7 @@ model SheetExercise {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   Exercise   Exercise @relation(fields: [exerciseId], references: [id])
-  Sheet      Sheet    @relation(fields: [sheetId], references: [id])
+  Sheet      Sheet    @relation(fields: [sheetId], references: [id], onDelete: Cascade)
 }
 
 model Workout {
@@ -84,7 +84,7 @@ model Workout {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   User      User     @relation(fields: [userId], references: [id])
-  Sheet     Sheet?   @relation(fields: [sheetId], references: [id])
+  Sheet     Sheet?   @relation(fields: [sheetId], references: [id], onDelete: Cascade)
 }
 
 enum Cardio {

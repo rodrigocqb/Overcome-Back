@@ -1,12 +1,17 @@
-import { postCreateSheet } from "@/controllers";
+import { postCreateSheet, postCreateSheetExercises } from "@/controllers";
 import { authenticateToken, validateBody } from "@/middlewares";
-import { sheetSchema } from "@/schemas";
+import { sheetExerciseListBodySchema, sheetSchema } from "@/schemas";
 import { Router } from "express";
 
 const sheetRouter = Router();
 
 sheetRouter
   .all("/*", authenticateToken)
-  .post("/", validateBody(sheetSchema), postCreateSheet);
+  .post("/", validateBody(sheetSchema), postCreateSheet)
+  .post(
+    "/:sheetId",
+    validateBody(sheetExerciseListBodySchema),
+    postCreateSheetExercises,
+  );
 
 export { sheetRouter };

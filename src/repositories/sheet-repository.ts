@@ -1,5 +1,5 @@
 import { prisma } from "@/config";
-import { SheetParams } from "@/types";
+import { SheetExerciseParams, SheetParams } from "@/types";
 
 async function createSheet(data: SheetParams) {
   return prisma.sheet.create({
@@ -7,4 +7,22 @@ async function createSheet(data: SheetParams) {
   });
 }
 
-export const sheetRepository = { createSheet };
+async function findSheetById(sheetId: number) {
+  return prisma.sheet.findFirst({
+    where: {
+      id: sheetId,
+    },
+  });
+}
+
+async function createSheetExercises(data: SheetExerciseParams[]) {
+  return prisma.sheetExercise.createMany({
+    data,
+  });
+}
+
+export const sheetRepository = {
+  createSheet,
+  findSheetById,
+  createSheetExercises,
+};
