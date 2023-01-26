@@ -1,9 +1,11 @@
 import { prisma } from "@/config";
 import { SheetExerciseParams, SheetParams } from "@/types";
 
-async function createSheet(data: SheetParams) {
-  return prisma.sheet.create({
-    data,
+async function findSheetsByUserId(userId: number) {
+  return prisma.sheet.findMany({
+    where: {
+      userId,
+    },
   });
 }
 
@@ -12,6 +14,12 @@ async function findSheetById(sheetId: number) {
     where: {
       id: sheetId,
     },
+  });
+}
+
+async function createSheet(data: SheetParams) {
+  return prisma.sheet.create({
+    data,
   });
 }
 
@@ -30,8 +38,9 @@ async function deleteSheetById(id: number) {
 }
 
 export const sheetRepository = {
-  createSheet,
+  findSheetsByUserId,
   findSheetById,
+  createSheet,
   createSheetExercises,
   deleteSheetById,
 };

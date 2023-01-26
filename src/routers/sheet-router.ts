@@ -1,5 +1,6 @@
 import {
   deleteSheetById,
+  getSheetsByUserId,
   postCreateSheet,
   putCreateSheetExercises,
 } from "@/controllers";
@@ -15,6 +16,7 @@ const sheetRouter = Router();
 
 sheetRouter
   .all("/*", authenticateToken)
+  .get("/", getSheetsByUserId)
   .post("/", validateBody(sheetSchema), postCreateSheet)
   .put(
     "/:sheetId",

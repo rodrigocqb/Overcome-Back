@@ -4,6 +4,11 @@ import { sheetRepository } from "@/repositories";
 import { SheetExerciseBody, SheetExerciseParams, SheetParams } from "@/types";
 import { Prisma } from "@prisma/client";
 
+async function getSheetsByUserId(userId: number) {
+  const sheets = await sheetRepository.findSheetsByUserId(userId);
+  return sheets;
+}
+
 async function createNewSheet({ userId, title }: SheetParams) {
   const sheet = await sheetRepository.createSheet({ userId, title });
   return sheet;
@@ -50,6 +55,7 @@ async function findSheetAndCheckOwnership({
 }
 
 export const sheetService = {
+  getSheetsByUserId,
   createNewSheet,
   insertExercisesIntoSheet,
   deleteSheetById,

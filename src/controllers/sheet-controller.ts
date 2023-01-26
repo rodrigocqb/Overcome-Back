@@ -4,6 +4,17 @@ import { SheetBody, SheetExerciseBody } from "@/types";
 import { Response } from "express";
 import httpStatus from "http-status";
 
+export async function getSheetsByUserId(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  const { userId } = req;
+
+  const sheets = await sheetService.getSheetsByUserId(userId);
+
+  return res.status(httpStatus.OK).send(sheets);
+}
+
 export async function postCreateSheet(
   req: AuthenticatedRequest,
   res: Response,
