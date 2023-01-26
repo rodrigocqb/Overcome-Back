@@ -180,3 +180,142 @@ describe("POST /journals", () => {
     });
   });
 });
+
+describe("PUT /journals/:journalId", () => {
+  it("should respond with status 401 if no token is given", async () => {
+    const response = await server.put("/journals/1").send({});
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  it("should respond with status 401 if given token is not valid", async () => {
+    const token = faker.lorem.word();
+
+    const response = await server
+      .put("/journals/1")
+      .set("Authorization", `Bearer ${token}`)
+      .send({});
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  it("should respond with status 401 if there is no session for given token", async () => {
+    const userWithoutSession = await createUser();
+    const token = jwt.sign(
+      { userId: userWithoutSession.id },
+      process.env.JWT_SECRET,
+    );
+
+    const response = await server
+      .put("/journals/1")
+      .set("Authorization", `Bearer ${token}`)
+      .send({});
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  describe("when given token is valid", () => {
+    it("should respond with status 400 when param is not valid", async () => {
+      const token = await generateValidToken();
+      const invalidBody = { [faker.lorem.word()]: faker.lorem.word() };
+
+      const response = await server
+        .put("/journals/a")
+        .set("Authorization", `Bearer ${token}`)
+        .send(invalidBody);
+
+      expect(response.status).toBe(httpStatus.BAD_REQUEST);
+    });
+
+    it("should respond with status 400 when journal does not exist - invalid partition", async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const invalidBody = { [faker.lorem.word()]: faker.lorem.word() };
+
+      const response = await server
+        .put("/journals/0")
+        .set("Authorization", `Bearer ${token}`)
+        .send(invalidBody);
+
+      expect(response.status).toBe(httpStatus.BAD_REQUEST);
+    });
+
+    it("should respond with status 400 when body is not valid", async () => {
+      const token = await generateValidToken();
+      const invalidBody = { [faker.lorem.word()]: faker.lorem.word() };
+
+      const response = await server
+        .put("/journals/1")
+        .set("Authorization", `Bearer ${token}`)
+        .send(invalidBody);
+
+      expect(response.status).toBe(httpStatus.BAD_REQUEST);
+    });
+
+    describe("when params and body are valid", () => {
+      it("should respond with status 404 when journal does not exist - valid partition", async () => {
+        const token = await generateValidToken();
+        const validBody = createValidjournalBody();
+
+        const response = await server
+          .put("/journals/1")
+          .set("Authorization", `Bearer ${token}`)
+          .send(validBody);
+
+        expect(response.status).toBe(httpStatus.NOT_FOUND);
+      });
+
+      it("should respond with status 403 when user does not own given journal", async () => {
+        const token = await generateValidToken();
+        const body = createValidjournalBody();
+        const journal = await createJournal();
+
+        const response = await server
+          .put(`/journals/${journal.id}`)
+          .set("Authorization", `Bearer ${token}`)
+          .send(body);
+
+        expect(response.status).toBe(httpStatus.FORBIDDEN);
+      });
+
+      describe("when journal exists and is owned by the user", () => {
+        it("should respond with status 200 and journal data", async () => {
+          const user = await createUser();
+          const token = await generateValidToken(user);
+          const body = createValidjournalBody();
+          const journal = await createJournal(user);
+
+          const response = await server
+            .put(`/journals/${journal.id}`)
+            .set("Authorization", `Bearer ${token}`)
+            .send(body);
+
+          expect(response.status).toBe(httpStatus.OK);
+          expect(response.body).toEqual(
+            expect.objectContaining({
+              id: journal.id,
+              text: body.text,
+              userId: user.id,
+              createdAt: journal.createdAt.toISOString(),
+            }),
+          );
+        });
+
+        it("should update journal on database", async () => {
+          const user = await createUser();
+          const token = await generateValidToken(user);
+          const body = createValidjournalBody();
+          const journal = await createJournal(user);
+
+          const response = await server
+            .put(`/journals/${journal.id}`)
+            .set("Authorization", `Bearer ${token}`)
+            .send(body);
+
+          expect(response.body.text).toBe(body.text);
+          expect(response.body.text).not.toBe(journal.text);
+        });
+      });
+    });
+  });
+});
