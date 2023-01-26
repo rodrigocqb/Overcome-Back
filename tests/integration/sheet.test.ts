@@ -73,10 +73,13 @@ describe("GET /sheets", () => {
       expect(response.body).toEqual([]);
     });
 
-    it("should respond with status 200 and an array of sheets if user has at least one sheet", async () => {
+    it("should respond with status 200 and an array of sheets including only its exercises if user has at least one sheet", async () => {
       const user = await createUser();
       const token = await generateValidToken(user);
       const sheet = await createSheet(user);
+      await createSheetExercise(sheet);
+      const otherSheet = await createSheet();
+      await createSheetExercise(otherSheet);
 
       const response = await server
         .get("/sheets")
@@ -90,6 +93,12 @@ describe("GET /sheets", () => {
           userId: user.id,
           createdAt: sheet.createdAt.toISOString(),
           updatedAt: sheet.updatedAt.toISOString(),
+          SheetExercise: [{
+            Exercise: {
+              id: expect.any(Number),
+              name: expect.any(String),
+            }
+          }]
         },
       ]);
     });

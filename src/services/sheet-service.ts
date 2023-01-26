@@ -2,14 +2,28 @@ import { notFoundError } from "@/errors";
 import { forbiddenError } from "@/errors/forbidden-error";
 import { sheetRepository } from "@/repositories";
 import { SheetExerciseBody, SheetExerciseParams, SheetParams } from "@/types";
-import { Prisma } from "@prisma/client";
+import { Prisma, Sheet } from "@prisma/client";
 
-async function getSheetsByUserId(userId: number) {
+async function getSheetsByUserId(userId: number): Promise<
+  {
+    title: string;
+    userId: number;
+    createdAt: Date;
+    updatedAt: Date;
+    SheetExercise: {
+      Exercise: {
+        id: number;
+        name: string;
+      };
+    }[];
+    id: number;
+  }[]
+> {
   const sheets = await sheetRepository.findSheetsByUserId(userId);
   return sheets;
 }
 
-async function createNewSheet({ userId, title }: SheetParams) {
+async function createNewSheet({ userId, title }: SheetParams): Promise<Sheet> {
   const sheet = await sheetRepository.createSheet({ userId, title });
   return sheet;
 }
@@ -45,7 +59,7 @@ async function deleteSheetById({
 async function findSheetAndCheckOwnership({
   sheetId,
   userId,
-}: FindSheetParams) {
+}: FindSheetParams): Promise<Sheet> {
   const sheet = await sheetRepository.findSheetById(sheetId);
   if (!sheet) throw notFoundError();
 

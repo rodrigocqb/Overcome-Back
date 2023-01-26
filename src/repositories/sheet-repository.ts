@@ -6,6 +6,23 @@ async function findSheetsByUserId(userId: number) {
     where: {
       userId,
     },
+    select: {
+      id: true,
+      title: true,
+      userId: true,
+      createdAt: true,
+      updatedAt: true,
+      SheetExercise: {
+        select: {
+          Exercise: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
   });
 }
 
