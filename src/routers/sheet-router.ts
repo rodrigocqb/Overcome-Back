@@ -1,6 +1,10 @@
-import { postCreateSheet, postCreateSheetExercises } from "@/controllers";
-import { authenticateToken, validateBody } from "@/middlewares";
-import { sheetExerciseListBodySchema, sheetSchema } from "@/schemas";
+import { postCreateSheet, putCreateSheetExercises } from "@/controllers";
+import { authenticateToken, validateBody, validateParams } from "@/middlewares";
+import {
+  sheetExerciseListBodySchema,
+  sheetIdParamsSchema,
+  sheetSchema,
+} from "@/schemas";
 import { Router } from "express";
 
 const sheetRouter = Router();
@@ -8,10 +12,11 @@ const sheetRouter = Router();
 sheetRouter
   .all("/*", authenticateToken)
   .post("/", validateBody(sheetSchema), postCreateSheet)
-  .post(
+  .put(
     "/:sheetId",
+    validateParams(sheetIdParamsSchema),
     validateBody(sheetExerciseListBodySchema),
-    postCreateSheetExercises,
+    putCreateSheetExercises,
   );
 
 export { sheetRouter };

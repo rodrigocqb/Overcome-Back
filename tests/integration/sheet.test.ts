@@ -7,9 +7,10 @@ import * as jwt from "jsonwebtoken";
 import { cleanDb, generateValidToken } from "../helpers";
 import {
   createExercise,
+  createSheet,
   createUser,
-  createValidExerciseBody,
   createValidSheetBody,
+  createValidSheetExerciseBody,
 } from "../factories";
 
 beforeAll(async () => {
@@ -109,6 +110,136 @@ describe("POST /sheets", () => {
 
         expect(beforeCount).toBe(0);
         expect(afterCount).toBe(1);
+      });
+    });
+  });
+});
+
+describe("PUT /sheets/:sheetId", () => {
+  it("should respond with status 401 if no token is given", async () => {
+    const response = await server.put("/sheets/1").send({});
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  it("should respond with status 401 if given token is not valid", async () => {
+    const token = faker.lorem.word();
+
+    const response = await server
+      .put("/sheets/1")
+      .set("Authorization", `Bearer ${token}`)
+      .send({});
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  it("should respond with status 401 if there is no session for given token", async () => {
+    const userWithoutSession = await createUser();
+    const token = jwt.sign(
+      { userId: userWithoutSession.id },
+      process.env.JWT_SECRET,
+    );
+
+    const response = await server
+      .put("/sheets/1")
+      .set("Authorization", `Bearer ${token}`)
+      .send({});
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  describe("when given token is valid", () => {
+    it("should respond with status 400 when param is not valid", async () => {
+      const token = await generateValidToken();
+      const invalidBody = { [faker.lorem.word()]: faker.lorem.word() };
+
+      const response = await server
+        .put("/sheets/a")
+        .set("Authorization", `Bearer ${token}`)
+        .send(invalidBody);
+
+      expect(response.status).toBe(httpStatus.BAD_REQUEST);
+    });
+
+    it("should respond with status 400 when body is not valid", async () => {
+      const token = await generateValidToken();
+      const invalidBody = { [faker.lorem.word()]: faker.lorem.word() };
+
+      const response = await server
+        .put("/sheets/1")
+        .set("Authorization", `Bearer ${token}`)
+        .send(invalidBody);
+
+      expect(response.status).toBe(httpStatus.BAD_REQUEST);
+    });
+
+    describe("when params and body are valid", () => {
+      it("should respond with status 404 when sheet does not exist", async () => {
+        const user = await createUser();
+        const token = await generateValidToken(user);
+        const exercise = await createExercise();
+        const body = createValidSheetExerciseBody(exercise);
+
+        const response = await server
+          .put("/sheets/1")
+          .set("Authorization", `Bearer ${token}`)
+          .send(body);
+
+        expect(response.status).toBe(httpStatus.NOT_FOUND);
+      });
+
+      it("should respond with status 403 when user does not own given sheet", async () => {
+        const user = await createUser();
+        const token = await generateValidToken(user);
+        const exercise = await createExercise();
+        const body = createValidSheetExerciseBody(exercise);
+        const sheet = await createSheet();
+
+        const response = await server
+          .put(`/sheets/${sheet.id}`)
+          .set("Authorization", `Bearer ${token}`)
+          .send(body);
+
+        expect(response.status).toBe(httpStatus.FORBIDDEN);
+      });
+
+      describe("when sheet exists and is owned by the user", () => {
+        it("should respond with status 200 and insert count", async () => {
+          const user = await createUser();
+          const token = await generateValidToken(user);
+          const exercise = await createExercise();
+          const body = createValidSheetExerciseBody(exercise);
+          const sheet = await createSheet(user);
+
+          const response = await server
+            .put(`/sheets/${sheet.id}`)
+            .set("Authorization", `Bearer ${token}`)
+            .send(body);
+
+          expect(response.status).toBe(httpStatus.OK);
+          expect(response.body).toEqual({
+            count: body.exerciseBody.length,
+          });
+        });
+
+        it("should not save exercises that do not exist", async () => {
+          const user = await createUser();
+          const token = await generateValidToken(user);
+          const body = createValidSheetExerciseBody();
+          const sheet = await createSheet(user);
+
+          const beforeCount = await prisma.sheetExercise.count();
+
+          await server
+            .put(`/sheets/${sheet.id}`)
+            .set("Authorization", `Bearer ${token}`)
+            .send(body);
+
+          const afterCount = await prisma.sheetExercise.count();
+
+          expect(beforeCount).toBe(0);
+          expect(afterCount).toBe(0);
+        });
       });
     });
   });

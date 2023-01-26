@@ -5,6 +5,11 @@ export const sheetSchema = Joi.object<SheetBody>({
   title: Joi.string().required(),
 });
 
+type SheetIdParams = { sheetId: number };
+export const sheetIdParamsSchema = Joi.object<SheetIdParams>({
+  sheetId: Joi.number().required(),
+});
+
 const sheetExerciseSchema = Joi.object<SheetExerciseBody>({
   exerciseId: Joi.number().required(),
   weight: Joi.number(),

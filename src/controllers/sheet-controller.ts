@@ -16,17 +16,19 @@ export async function postCreateSheet(
   return res.status(httpStatus.CREATED).send(sheet);
 }
 
-export async function postCreateSheetExercises(
+export async function putCreateSheetExercises(
   req: AuthenticatedRequest,
   res: Response,
 ) {
+  const { userId } = req;
   const sheetId = Number(req.params.sheetId);
   const { exerciseBody } = req.body as { exerciseBody: SheetExerciseBody[] };
 
   const insertCount = await sheetService.insertExercisesIntoSheet({
     sheetId,
     exerciseBody,
+    userId
   });
 
-  return res.status(httpStatus.CREATED).send(insertCount);
+  return res.status(httpStatus.OK).send(insertCount);
 }
