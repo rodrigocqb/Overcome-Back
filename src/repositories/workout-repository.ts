@@ -9,7 +9,6 @@ async function findWorkoutsByUserId(userId: number) {
     include: {
       Sheet: true,
     },
-    take: 10,
   });
 }
 
