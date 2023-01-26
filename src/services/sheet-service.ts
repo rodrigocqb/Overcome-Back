@@ -1,23 +1,16 @@
 import { notFoundError, forbiddenError } from "@/errors";
 import { sheetRepository } from "@/repositories";
-import { SheetExerciseBody, SheetExerciseParams, SheetParams } from "@/types";
+import {
+  SheetExerciseBody,
+  SheetExerciseParams,
+  SheetParams,
+  SheetWithExercises,
+} from "@/types";
 import { Prisma, Sheet } from "@prisma/client";
 
-async function getSheetsByUserId(userId: number): Promise<
-  {
-    title: string;
-    userId: number;
-    createdAt: Date;
-    updatedAt: Date;
-    SheetExercise: {
-      Exercise: {
-        id: number;
-        name: string;
-      };
-    }[];
-    id: number;
-  }[]
-> {
+async function getSheetsByUserId(
+  userId: number,
+): Promise<SheetWithExercises[]> {
   const sheets = await sheetRepository.findSheetsByUserId(userId);
   return sheets;
 }
