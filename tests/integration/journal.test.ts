@@ -5,7 +5,11 @@ import httpStatus from "http-status";
 import supertest from "supertest";
 import * as jwt from "jsonwebtoken";
 import { cleanDb, generateValidToken } from "../helpers";
-import { createJournal, createUser } from "../factories";
+import {
+  createJournal,
+  createUser,
+  createValidjournalBody,
+} from "../factories";
 
 beforeAll(async () => {
   await init();
@@ -85,6 +89,94 @@ describe("GET /journals", () => {
           updatedAt: journal.updatedAt.toISOString(),
         },
       ]);
+    });
+  });
+});
+
+describe("POST /journals", () => {
+  it("should respond with status 401 if no token is given", async () => {
+    const response = await server.post("/journals").send({});
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  it("should respond with status 401 if given token is not valid", async () => {
+    const token = faker.lorem.word();
+
+    const response = await server
+      .post("/journals")
+      .set("Authorization", `Bearer ${token}`)
+      .send({});
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  it("should respond with status 401 if there is no session for given token", async () => {
+    const userWithoutSession = await createUser();
+    const token = jwt.sign(
+      { userId: userWithoutSession.id },
+      process.env.JWT_SECRET,
+    );
+
+    const response = await server
+      .post("/journals")
+      .set("Authorization", `Bearer ${token}`)
+      .send({});
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  describe("when given token is valid", () => {
+    it("should respond with status 400 when body is not valid", async () => {
+      const token = await generateValidToken();
+      const invalidBody = { [faker.lorem.word()]: faker.lorem.word() };
+
+      const response = await server
+        .post("/journals")
+        .set("Authorization", `Bearer ${token}`)
+        .send(invalidBody);
+
+      expect(response.status).toBe(httpStatus.BAD_REQUEST);
+    });
+
+    describe("when body is valid", () => {
+      it("should respond with status 201 and journal data", async () => {
+        const user = await createUser();
+        const token = await generateValidToken(user);
+        const body = createValidjournalBody();
+
+        const response = await server
+          .post("/journals")
+          .set("Authorization", `Bearer ${token}`)
+          .send(body);
+
+        expect(response.status).toBe(httpStatus.CREATED);
+        expect(response.body).toEqual(
+          expect.objectContaining({
+            id: expect.any(Number),
+            text: body.text,
+            userId: user.id,
+          }),
+        );
+      });
+
+      it("should save journal on database", async () => {
+        const user = await createUser();
+        const token = await generateValidToken(user);
+        const body = createValidjournalBody();
+
+        const beforeCount = await prisma.journal.count();
+
+        await server
+          .post("/journals")
+          .set("Authorization", `Bearer ${token}`)
+          .send(body);
+
+        const afterCount = await prisma.journal.count();
+
+        expect(beforeCount).toBe(0);
+        expect(afterCount).toBe(1);
+      });
     });
   });
 });

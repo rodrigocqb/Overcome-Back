@@ -12,3 +12,9 @@ export async function createJournal(user?: User) {
     },
   });
 }
+
+export function createValidjournalBody() {
+  return {
+    text: faker.lorem.paragraph(),
+  };
+}
