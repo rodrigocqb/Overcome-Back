@@ -1,4 +1,6 @@
+import { badRequestError } from "@/errors";
 import { workoutRepository } from "@/repositories";
+import { WorkoutBody } from "@/types/workout-types";
 import { Sheet, Workout } from "@prisma/client";
 
 async function getWorkoutsByUserId(userId: number): Promise<
@@ -10,4 +12,16 @@ async function getWorkoutsByUserId(userId: number): Promise<
   return workouts;
 }
 
-export const workoutService = { getWorkoutsByUserId };
+async function createWorkout({
+  userId,
+  sheetId,
+  cardio,
+}: { userId: number } & WorkoutBody) {
+  if (!sheetId && !cardio) throw badRequestError();
+
+  const workout = workoutRepository.createWorkout({ userId, sheetId, cardio });
+
+  return workout;
+}
+
+export const workoutService = { getWorkoutsByUserId, createWorkout };
