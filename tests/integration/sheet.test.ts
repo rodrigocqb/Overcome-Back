@@ -336,7 +336,7 @@ describe("PUT /sheets/:sheetId", () => {
   });
 });
 
-describe("DELETE /sheets", () => {
+describe("DELETE /sheets/:sheetId", () => {
   it("should respond with status 401 if no token is given", async () => {
     const response = await server.delete("/sheets");
 
