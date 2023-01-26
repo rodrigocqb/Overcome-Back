@@ -43,3 +43,15 @@ export async function putUpdateJournal(
 
   return res.status(httpStatus.OK).send(updatedJournal);
 }
+
+export async function deleteJournalById(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
+  const { userId } = req;
+  const journalId = Number(req.params.journalId);
+
+  await journalService.deleteJournalById({ userId, journalId });
+
+  return res.sendStatus(httpStatus.NO_CONTENT);
+}

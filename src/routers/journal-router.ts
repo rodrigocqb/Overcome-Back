@@ -1,4 +1,5 @@
 import {
+  deleteJournalById,
   getJournalsByUserId,
   postCreateJournal,
   putUpdateJournal,
@@ -19,6 +20,10 @@ journalRouter
     validateBody(journalSchema),
     putUpdateJournal,
   )
-  .delete("/:journalId", validateParams(journalParamsSchema));
+  .delete(
+    "/:journalId",
+    validateParams(journalParamsSchema),
+    deleteJournalById,
+  );
 
 export { journalRouter };

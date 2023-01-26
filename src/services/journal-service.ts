@@ -20,7 +20,7 @@ async function updateJournalById({
   userId,
   text,
   journalId,
-}: UpdateJournalServiceParams) {
+}: UpdateJournalServiceParams): Promise<Journal> {
   await findJournalAndCheckOwnership({ userId, journalId });
 
   const updatedJournal = await journalRepository.updateJournalById({
@@ -28,6 +28,16 @@ async function updateJournalById({
     text,
   });
   return updatedJournal;
+}
+
+async function deleteJournalById({
+  journalId,
+  userId,
+}: FindJournalParams): Promise<void> {
+  await findJournalAndCheckOwnership({ journalId, userId });
+
+  await journalRepository.deleteJournalById(journalId);
+  return;
 }
 
 async function findJournalAndCheckOwnership({
@@ -46,6 +56,7 @@ export const journalService = {
   getJournalsByUserId,
   createNewJournal,
   updateJournalById,
+  deleteJournalById,
 };
 
 type UpdateJournalServiceParams = {

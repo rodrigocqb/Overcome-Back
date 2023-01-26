@@ -17,7 +17,7 @@ async function createWorkout({
   userId,
   sheetId = null,
   cardio = null,
-}: { userId: number } & WorkoutBody) {
+}: { userId: number } & WorkoutBody): Promise<Workout> {
   validateWorkoutBody({ sheetId, cardio });
   if (sheetId) {
     await findSheetAndCheckOwnership({ sheetId, userId });

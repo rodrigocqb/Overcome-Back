@@ -34,9 +34,18 @@ async function updateJournalById({ id, text }: JournalUpdateParams) {
   });
 }
 
+async function deleteJournalById(journalId: number) {
+  return prisma.journal.delete({
+    where: {
+      id: journalId,
+    },
+  });
+}
+
 export const journalRepository = {
   findJournalsByUserId,
   findJournalById,
   createJournal,
   updateJournalById,
+  deleteJournalById,
 };
