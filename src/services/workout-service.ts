@@ -2,6 +2,7 @@ import { badRequestError } from "@/errors";
 import { workoutRepository } from "@/repositories";
 import { WorkoutBody } from "@/types/workout-types";
 import { Sheet, Workout } from "@prisma/client";
+import { findSheetAndCheckOwnership } from "./sheet-service";
 
 async function getWorkoutsByUserId(userId: number): Promise<
   (Workout & {
@@ -17,12 +18,19 @@ async function createWorkout({
   sheetId = null,
   cardio = null,
 }: { userId: number } & WorkoutBody) {
-  if (!sheetId && !cardio) throw badRequestError();
-  if (sheetId && cardio) throw badRequestError();
+  validateWorkoutBody({ sheetId, cardio });
+  if (sheetId) {
+    await findSheetAndCheckOwnership({ sheetId, userId });
+  }
 
   const workout = workoutRepository.createWorkout({ userId, sheetId, cardio });
 
   return workout;
+}
+
+function validateWorkoutBody({ sheetId, cardio }: WorkoutBody): void {
+  if ((!sheetId && !cardio) || (sheetId && cardio)) throw badRequestError();
+  return;
 }
 
 export const workoutService = { getWorkoutsByUserId, createWorkout };

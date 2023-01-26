@@ -56,7 +56,7 @@ async function deleteSheetById({
   return;
 }
 
-async function findSheetAndCheckOwnership({
+export async function findSheetAndCheckOwnership({
   sheetId,
   userId,
 }: FindSheetParams): Promise<Sheet> {
