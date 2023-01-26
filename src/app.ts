@@ -2,7 +2,14 @@ import express, { Express } from "express";
 import "express-async-errors";
 import cors from "cors";
 import { connectDb, disconnectDB, loadEnv } from "@/config";
-import { authRouter, exerciseRouter, objectiveRouter, sheetRouter, workoutRouter } from "@/routers";
+import {
+  authRouter,
+  exerciseRouter,
+  objectiveRouter,
+  sheetRouter,
+  workoutRouter,
+  journalRouter,
+} from "@/routers";
 import { handleApplicationErrors } from "@/middlewares";
 
 loadEnv();
@@ -17,6 +24,7 @@ app
   .use("/exercises", exerciseRouter)
   .use("/sheets", sheetRouter)
   .use("/workouts", workoutRouter)
+  .use("/journals", journalRouter)
   .use(handleApplicationErrors);
 
 export async function init(): Promise<Express> {

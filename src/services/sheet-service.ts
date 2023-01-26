@@ -1,5 +1,4 @@
-import { notFoundError } from "@/errors";
-import { forbiddenError } from "@/errors/forbidden-error";
+import { notFoundError, forbiddenError } from "@/errors";
 import { sheetRepository } from "@/repositories";
 import { SheetExerciseBody, SheetExerciseParams, SheetParams } from "@/types";
 import { Prisma, Sheet } from "@prisma/client";

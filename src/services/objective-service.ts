@@ -1,5 +1,4 @@
-import { notFoundError } from "@/errors";
-import { forbiddenError } from "@/errors/forbidden-error";
+import { notFoundError, forbiddenError } from "@/errors";
 import { objectiveRepository } from "@/repositories";
 import { ObjectiveParams } from "@/types";
 import { Objective } from "@prisma/client";
