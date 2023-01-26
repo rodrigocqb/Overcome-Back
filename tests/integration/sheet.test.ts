@@ -28,6 +28,73 @@ afterAll(async () => {
 
 const server = supertest(app);
 
+describe("GET /sheets", () => {
+  it("should respond with status 401 if no token is given", async () => {
+    const response = await server.get("/sheets");
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  it("should respond with status 401 if given token is not valid", async () => {
+    const token = faker.lorem.word();
+
+    const response = await server
+      .get("/sheets")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  it("should respond with status 401 if there is no session for given token", async () => {
+    const userWithoutSession = await createUser();
+    const token = jwt.sign(
+      { userId: userWithoutSession.id },
+      process.env.JWT_SECRET,
+    );
+
+    const response = await server
+      .get("/sheets")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
+  });
+
+  describe("when given token is valid", () => {
+    it("should respond with status 200 and an empty array if user has no sheets", async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+
+      const response = await server
+        .get("/sheets")
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(response.status).toBe(httpStatus.OK);
+      expect(response.body).toEqual([]);
+    });
+
+    it("should respond with status 200 and an array of sheets if user has at least one sheet", async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const sheet = await createSheet(user);
+
+      const response = await server
+        .get("/sheets")
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(response.status).toBe(httpStatus.OK);
+      expect(response.body).toEqual([
+        {
+          id: sheet.id,
+          title: sheet.title,
+          userId: user.id,
+          createdAt: sheet.createdAt.toISOString(),
+          updatedAt: sheet.updatedAt.toISOString(),
+        },
+      ]);
+    });
+  });
+});
+
 describe("POST /sheets", () => {
   it("should respond with status 401 if no token is given", async () => {
     const response = await server.post("/sheets").send({});
@@ -89,7 +156,7 @@ describe("POST /sheets", () => {
         expect(response.body).toEqual(
           expect.objectContaining({
             id: expect.any(Number),
-            title: body.title
+            title: body.title,
           }),
         );
       });
