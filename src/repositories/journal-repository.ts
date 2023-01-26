@@ -1,4 +1,5 @@
 import { prisma } from "@/config";
+import { JournalParams } from "@/types";
 
 async function findJournalsByUserId(userId: number) {
   return prisma.journal.findMany({
@@ -8,4 +9,10 @@ async function findJournalsByUserId(userId: number) {
   });
 }
 
-export const journalRepository = { findJournalsByUserId };
+async function createJournal(data: JournalParams) {
+  return prisma.journal.create({
+    data,
+  });
+}
+
+export const journalRepository = { findJournalsByUserId, createJournal };
