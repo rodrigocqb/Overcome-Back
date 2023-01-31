@@ -6,6 +6,9 @@ async function findSheetsByUserId(userId: number) {
     where: {
       userId,
     },
+    orderBy: [{
+      createdAt: "desc",
+    }],
     select: {
       id: true,
       title: true,
