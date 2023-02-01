@@ -25,7 +25,7 @@ async function findExercisesBySearchParam(searchParam: string) {
         mode: "insensitive",
       },
     },
-    take: 4,
+    take: 3,
   });
 }
 
