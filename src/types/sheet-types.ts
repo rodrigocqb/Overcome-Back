@@ -9,14 +9,17 @@ export type SheetExerciseParams = Omit<
 export type SheetExerciseBody = Omit<SheetExerciseParams, "sheetId">;
 export type SheetWithExercises = {
   title: string;
-  userId: number;
+  id: number;
   createdAt: Date;
   updatedAt: Date;
+  userId: number;
   SheetExercise: {
-    Exercise: {
-      id: number;
-      name: string;
-    };
+      weight: number;
+      reps: number;
+      sets: number;
+      Exercise: {
+          id: number;
+          name: string;
+      };
   }[];
-  id: number;
 };
