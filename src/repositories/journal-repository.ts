@@ -6,6 +6,9 @@ async function findJournalsByUserId(userId: number) {
     where: {
       userId,
     },
+    orderBy: [{
+      createdAt: "desc",
+    }],
   });
 }
 
