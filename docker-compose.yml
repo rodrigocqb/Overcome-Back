@@ -6,7 +6,7 @@ services:
     ports:
       - 2345:5432
     env_file:
-      - .env
+      - .env.production
     restart: always
     volumes:
       - volume_postgres:/var/lib/postgres/data
@@ -20,7 +20,7 @@ services:
     volumes:
       - volume_redis:/var/lib/redis/data
     env_file:
-      - .env
+      - .env.production
     command: ["redis-server", "--bind", "redis", "--port", "6379"]
     
 
@@ -30,7 +30,7 @@ services:
     ports:
       - 4000:4000
     env_file:
-      - .env
+      - .env.production
     volumes:
       - .:/usr/src
       - /usr/src/node_modules
