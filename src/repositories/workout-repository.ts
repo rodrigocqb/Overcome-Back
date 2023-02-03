@@ -9,6 +9,9 @@ async function findWorkoutsByUserId(userId: number) {
     include: {
       Sheet: true,
     },
+    orderBy: [{
+      createdAt: "desc",
+    }],
   });
 }
 
