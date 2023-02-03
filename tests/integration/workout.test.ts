@@ -87,6 +87,15 @@ describe("GET /workouts", () => {
       expect(response.status).toBe(httpStatus.OK);
       expect(response.body).toEqual([
         {
+          id: cardioWorkout.id,
+          userId: user.id,
+          sheetId: null,
+          createdAt: cardioWorkout.createdAt.toISOString(),
+          updatedAt: cardioWorkout.updatedAt.toISOString(),
+          cardio: Cardio.CYCLING,
+          Sheet: null,
+        },
+        {
           id: sheetWorkout.id,
           userId: user.id,
           sheetId: sheet.id,
@@ -100,15 +109,6 @@ describe("GET /workouts", () => {
             createdAt: sheet.createdAt.toISOString(),
             updatedAt: sheet.updatedAt.toISOString(),
           },
-        },
-        {
-          id: cardioWorkout.id,
-          userId: user.id,
-          sheetId: null,
-          createdAt: cardioWorkout.createdAt.toISOString(),
-          updatedAt: cardioWorkout.updatedAt.toISOString(),
-          cardio: Cardio.CYCLING,
-          Sheet: null,
         },
       ]);
     });
