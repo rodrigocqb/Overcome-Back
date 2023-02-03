@@ -11,6 +11,7 @@
     "load-envs": "dotenv -e .env",
     "migration:run": "prisma migrate deploy",
     "migration:generate": "npm run load-envs prisma migrate dev",
+    "migrate:start": "npm run migration:generate && npm start",
     "lint": "eslint .",
     "lint:staged": "lint-staged",
     "test": "NODE_ENV=test jest --passWithNoTests --runInBand --forceExit",
