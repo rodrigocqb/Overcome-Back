@@ -11,6 +11,6 @@ export function loadEnv() {
           ? ".env.production"
           : ".env";
 
-  const currentEnvs = dotenv.config({ path });
+  const currentEnvs = dotenv.config({ path, override: true });
   dotenvExpand.expand(currentEnvs);
 }
