@@ -13,14 +13,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        
+      - name: Create .env.production
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env.production
 
       - name: Build and Run
         run: docker-compose up --build
-        env:
-          JWT_SECRET: ${{secrets.JWT_SECRET}}
-          POSTGRES_USERNAME: ${{secrets.POSTGRES_USERNAME}}
-          POSTGRES_HOST: ${{secrets.POSTGRES_HOST}}
-          POSTGRES_PORT: ${{secrets.POSTGRES_PORT}}
-          POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
-          POSTGRES_DATABASE: ${{secrets.POSTGRES_DATABASE}}
-          DATABASE_URL: ${{secrets.DATABASE_URL}}
