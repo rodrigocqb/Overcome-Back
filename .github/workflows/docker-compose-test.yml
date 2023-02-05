@@ -5,7 +5,7 @@ on:
 
 name: Test Docker Compose Build and Run
 jobs:
-  build and run:
+  build_and_run:
     runs-on: ubuntu-latest
 
     timeout-minutes: 20
