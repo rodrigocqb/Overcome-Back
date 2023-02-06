@@ -52,7 +52,7 @@ mkdir Overcome-Back
 ```
 2. Clone this repository
 3. Create .env.production based on .env.example
-4. If you don't have docker and/or docker compose, please install both
+4. If you don't have docker and/or docker compose, please make sure you have both installed
 5. Run docker compose
 ```bash
 docker-compose up --build
