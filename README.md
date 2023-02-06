@@ -52,9 +52,11 @@ mkdir Overcome-Back
 ```
 2. Clone this repository
 3. Create .env.production based on .env.example
-4. Run docker compose
+4. If you don't have docker and/or docker compose, please install both
+5. Run docker compose
 ```bash
 docker-compose up --build
 ```
-5. After that, you can access the api through http://localhost:4000/
+6. After that, you can access the api through http://localhost:4000/
+7. If you intend to run it with the front-end, please refer to the instructions at https://github.com/rodrigocqb/Overcome-Front
 
