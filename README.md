@@ -149,8 +149,8 @@ Response Body:
   {
     "id": 1,
     "name": "Bench Press",
-    "createdAt": Date,
-    "updatedAt": Date
+    "createdAt": "2023-02-04T16:17:54.910Z",
+    "updatedAt": "2023-02-04T16:17:54.910Z"
   }
 ]
 ```
@@ -179,8 +179,8 @@ Response Body:
   {
     "id": 1,
     "name": "Bench Press",
-    "createdAt": Date,
-    "updatedAt": Date
+    "createdAt": "2023-02-04T16:17:54.910Z",
+    "updatedAt": "2023-02-04T16:17:54.910Z"
   }
 ]
 ```
@@ -210,8 +210,8 @@ Response Body:
 {
   "id": 1,
   "name": "Bench Press",
-  "createdAt": Date,
-  "updatedAt": Date
+  "createdAt": "2023-02-04T16:17:54.910Z",
+  "updatedAt": "2023-02-04T16:17:54.910Z"
 }
 ```
 <br>
@@ -234,8 +234,8 @@ Response Body:
   "title": "Become stronger",
   "currentWeight": 60.5,
   "goalWeight": 65,
-  "createdAt": Date,
-  "updatedAt": Date
+  "createdAt": "2023-02-04T16:17:54.910Z",
+  "updatedAt": "2023-02-04T16:17:54.910Z"
 }
 ```
 <br>
@@ -270,8 +270,8 @@ Response Body:
   "title": "Become stronger",
   "currentWeight": 60.5,
   "goalWeight": 65,
-  "createdAt": Date,
-  "updatedAt": Date
+  "createdAt": "2023-02-04T16:17:54.910Z",
+  "updatedAt": "2023-02-04T16:17:54.910Z"
 }
 ```
 <br>
@@ -306,8 +306,8 @@ Response Body:
   "title": "Become stronger",
   "currentWeight": 60.5,
   "goalWeight": 65,
-  "createdAt": Date,
-  "updatedAt": Date
+  "createdAt": "2023-02-04T16:17:54.910Z",
+  "updatedAt": "2023-02-04T16:17:54.910Z"
 }
 ```
 <br>
@@ -324,8 +324,8 @@ Response Body:
     "id": 1,
     "title": "Chest Day",
     "userId": 1,
-    "createdAt": Date,
-    "updatedAt": Date,
+    "createdAt": "2023-02-04T16:17:54.910Z",
+    "updatedAt": "2023-02-04T16:17:54.910Z",
     "SheetExercise": [
       {
         "weight": 42.5,
@@ -364,8 +364,8 @@ Response Body:
   "id": 1,
   "title": "Chest Day",
   "userId": 1,
-  "createdAt": Date,
-  "updatedAt": Date
+  "createdAt": "2023-02-04T16:17:54.910Z",
+  "updatedAt": "2023-02-04T16:17:54.910Z"
 }
 ```
 <br>
@@ -455,8 +455,8 @@ Response Body:
     "userId": 1,
     "sheetId": null,
     "cardio": "CYCLING",
-    "createdAt": Date,
-    "updatedAt": Date,
+    "createdAt": "2023-02-04T16:17:54.910Z",
+    "updatedAt": "2023-02-04T16:17:54.910Z",
     "Sheet": null
   },
   {
@@ -464,14 +464,14 @@ Response Body:
     "userId": 1,
     "sheetId": 1,
     "cardio": null,
-    "createdAt": Date,
-    "updatedAt": Date,
+    "createdAt": "2023-02-04T16:17:54.910Z",
+    "updatedAt": "2023-02-04T16:17:54.910Z",
     "Sheet": {
       "id": 1,
       "title": "Chest Day",
       "userId": 1,
-      "createdAt": Date,
-      "updatedAt": Date
+      "createdAt": "2023-02-04T16:17:54.910Z",
+      "updatedAt": "2023-02-04T16:17:54.910Z"
     }
   }
 ]
@@ -482,15 +482,21 @@ Response Body:
 Body:
 ```json
 {
-  "sheetId": 1,
-  "cardio": null | undefined
+  "sheetId": 1
 }
 ```
 or
 ```json
 {
-  "sheetId": null | undefined,
-  "cardio": "CYCLING" | "RUNNING" | "SWIMMING"
+  "cardio": "CYCLING"
+}
+```
+cardio has only three possible values:
+```json
+{
+  "CYCLING": "CYCLING",
+  "RUNNING": "RUNNING",
+  "SWIMMING": "SWIMMING"
 }
 ```
 
@@ -518,8 +524,8 @@ Response Body:
   "userId": 1,
   "sheetId": null,
   "cardio": "CYCLING",
-  "createdAt": Date,
-  "updatedAt": Date
+  "createdAt": "2023-02-04T16:17:54.910Z",
+  "updatedAt": "2023-02-04T16:17:54.910Z"
 }
 ```
 <br>
@@ -536,8 +542,8 @@ Response Body:
     "id": 1,
     "userId": 1,
     "text": "Lorem ipsum dolor",
-    "createdAt": Date,
-    "updatedAt": Date
+    "createdAt": "2023-02-04T16:17:54.910Z",
+    "updatedAt": "2023-02-04T16:17:54.910Z"
   }
 ]
 ```
@@ -566,8 +572,8 @@ Response Body:
   "id": 1,
   "userId": 1,
   "text": "Lorem ipsum dolor",
-  "createdAt": Date,
-  "updatedAt": Date
+  "createdAt": "2023-02-04T16:17:54.910Z",
+  "updatedAt": "2023-02-04T16:17:54.910Z"
 }
 ```
 <br>
@@ -612,8 +618,8 @@ Response Body:
   "id": 1,
   "userId": 1,
   "text": "Lorem ipsum",
-  "createdAt": Date,
-  "updatedAt": Date
+  "createdAt": "2023-02-04T16:17:54.910Z",
+  "updatedAt": "2023-02-04T16:17:54.910Z"
 }
 ```
 
